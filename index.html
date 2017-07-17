@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Neighbourhood Map</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js\jquery-3.1.1.min.js"></script>
+    <script src="js\knockout-3.4.2.js"></script>
+</head>
+<body>
+    <div class="row">
+         <div class="col-md-12">
+            <form class="navbar">
+               <div class="form-group">
+                  <input type="text" class="searchbox" placeholder="Search here..." data-bind="value: inputValue, valueUpdate: 'afterkeydown', event: {keyup: filtersearch}">
+               </div>
+            </form>
+            <!--knockout js to bind-->
+            <ul class="nav navbar-default " data-bind="foreach:markers">
+               <li class="list">
+                  <a data-bind="visible:show, event:{click:$parent.selectAll},text:title"></a>
+               </li>
+            </ul>
+         </div>
+      <div id="map"></div>
+  </div>
+    <script async defer
+         src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyDwoCBRgZjmGua1-owWMPbFy6eKVuxZzpI&callback=initMap">
+    </script>
+    <script src="js/app.js"></script>
+</body>
+</html>
