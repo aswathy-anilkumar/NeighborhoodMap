@@ -1,128 +1,148 @@
 var map;
-var largeInfoWindow,bounds;
+var largeInfoWindow, bounds;
 
-var locArray = [
-    {
-        location: {lat: 30.7525,
-        lng: 76.8101},
-        title: "Rock Garden",
-        show : true,
-        select : false,
-        id : '4b6fe660f964a5206dff2ce3'
+var locArray = [{
+        location: {
+            lat: 8.509140,
+            lng: 76.955219
+        },
+        title: "Napier museum",
+        address: "LMS Vellayambalam Road, Palayam, Thiruvananthapuram",
+        show: true,
+        select: false,
+        id: '4b985fb9f964a520af3e35e3'
     },
     {
-        location: {lat: 30.7421,
-        lng: 76.8188},
-        title: "Sukhna Lake",
-        show : true,
-        select : false,
-        id : '5204feb1498ed42a61bafb61'
+        location: {
+            lat: 8.510555,
+            lng: 76.955499
+        },
+        title: "Zoo",
+        address: "Nanthancodu, Thiruvananthapuram",
+        show: true,
+        select: false,
+        id: '4e7482561495be5170af546a'
     },
     {
-        location: {lat: 30.7461,
-        lng: 76.7820},
-        title: "Rose Garden",
-        show : true,
-        select : false,
-        id : '4c0ba827009a0f47975cebbf'
+        location: {
+            lat: 8.524001,
+            lng: 76.963187
+        },
+        title: "Kowdiar Palace",
+        address: "Kowdiar Gardens, Thiruvananthapuram",
+        show: true,
+        select: false,
+        id: '51177670e4b0e3bf0160fb14'
     },
     {
-        location: {lat: 30.7941,
-        lng: 76.9147},
-        title: "Pinjor Garden",
-        show : true,
-        select : false,
-        id : '50f2dd31e4b0ff7d3253b877'
+        location: {
+            lat: 8.482838,
+            lng: 76.944161
+        },
+        title: "Sree Padmanabha Swamy Temple ",
+        address: "East Fort, Pazhavangadi, Thiruvananthapuram",
+        show: true,
+        select: false,
+        id: '4baf0a21f964a52038e83be3'
     },
     {
-        location: {lat: 30.7056,
-        lng: 76.8013},
-        title: "elante mall",
-        show : true,
-        select : false,
-        id : '5114cd90e4b06bb0ed15a97f'
+        location: {
+            lat: 8.481147,
+            lng: 76.945108
+        },
+        title: "Sri Swathi Thirunal Museum",
+        address: "East Fort, Pazhavangadi, Thiruvananthapuram",
+        show: true,
+        select: false,
+        id: '4c6a61ebd0bdc9b6a44ca80b'
     }
-    ];
+];
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: 30.7333 , lng: 76.7794},
+        center: {
+            lat: 8.482048,
+            lng: 76.947448
+        },
         zoom: 12
     });
 
-// creating infoWindow
-largeInfoWindow = new google.maps.InfoWindow();
-bounds = new google.maps.LatLngBounds();
+    // creating infoWindow
+    largeInfoWindow = new google.maps.InfoWindow();
+    bounds = new google.maps.LatLngBounds();
     ko.applyBindings(new viewModel());
 }
 
 function viewModel() {
     selectedloc = ko.observable('');
-    var self=this;
-    self.markers=[];
-    self.populateInfoWindow = function(marker,infowindow) {
-        console.log(marker.id +marker.title);
+    var self = this;
+    self.markers = [];
+    self.populateInfoWindow = function(marker, infowindow) {
+        console.log(marker.id + marker.title);
         $.ajax({
             method: 'GET',
             dataType: "json",
-            url: "https://api.foursquare.com/v2/venues/" + marker.id + '?ll=40.7,-74&client_id=OCOENKHAZZJTCSIZJN2ZCMUEJE01GLSCVBV3PAVGR5KVL2TA&client_secret=0TN5PQPW1CBY2ZGWCPF3GYGPZ500RDUEIE5IPPI4D1W42IVM&v=20170101',
+            url: "https://api.foursquare.com/v2/venues/" + marker.id + '?ll=40.7,-74&client_id=MGVKRDACHDQFKE24CSNGUOO2JQIRL4AGJ3NWSHLI4N4EGGHL&client_secret=VJ50CPR42GOJRUIVJU2DPYCX2SISJGXHXSW1J34OCJ2O53ED&v=20170101',
             success: function(data) {
 
                 var final = data.response.venue;
                 console.log(final);
                 if ((final.hasOwnProperty('likes'))) {
                     marker.likes = final.likes.count;
-                    infowindow.setContent(marker.title + "\nLikes" + final.likes.count  );
+                    infowindow.setContent(marker.title + "\nLikes" + final.likes.count);
                     infowindow.open(map, marker);
                     infowindow.addListener('closeclick', function() {
                         infowindow.marker = 0;
-                });} else {
+                    });
+                } else {
                     marker.likes = 'error';
                 }
             },
-                  error: function(e) {
+            error: function(e) { //error handling
                 alert('There is some error in fetching data');
             }
 
         });
-    }
+    };
 
     // bouncing effect on markers
     self.Bounce = function(marker) {
         if (marker.getAnimation() !== null) {
             marker.setAnimation(null);
-        }
-        else {
+        } else {
             marker.setAnimation(google.maps.Animation.BOUNCE);
-            setTimeout(function(){ marker.setAnimation(null) }, 750);
+            setTimeout(function() {
+                marker.setAnimation(null);
+            }, 750);
         }
-    }
+    };
 
     //creating markers array
-    for(var i=0; i<locArray.length; i++) {
+    for (var i = 0; i < locArray.length; i++) {
         var position = locArray[i].location;
-        var title= locArray[i].title;
+        var title = locArray[i].title;
         var id = locArray[i].id;
         var marker = new google.maps.Marker({
-          map: map,
-          position:position,
-          title:title,
-          id : id,
-          select: ko.observable(locArray[i].select),
-          show: ko.observable(locArray[i].show),
-          animation: google.maps.Animation.DROP
+            map: map,
+            position: position,
+            title: title,
+            id: id,
+            select: ko.observable(locArray[i].select),
+            show: ko.observable(locArray[i].show),
+            animation: google.maps.Animation.DROP
         });
         self.markers.push(marker);
         bounds.extend(marker.position);
         // on click infowindow will open
-        marker.addListener('click',function(){
-            self.populateInfoWindow(this,largeInfoWindow);
+        marker.addListener('click', function() {
+            self.populateInfoWindow(this, largeInfoWindow);
         });
         // on click marker will bounce
-        marker.addListener('click',function(){
+        marker.addListener('click', function() {
             self.Bounce(this);
         });
     }
+    
     map.fitBounds(bounds);
 
     self.inputValue = ko.observable();
@@ -159,5 +179,5 @@ function viewModel() {
             self.markers[i].selected(true);
             self.markers[i].setVisible(element);
         }
-    }
-};
+    };
+}
